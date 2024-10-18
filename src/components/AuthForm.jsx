@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "@/store/authSlice";
@@ -13,7 +13,6 @@ const AuthForm = () => {
     name: "",
     email: "",
     password: "",
-    licenseNumber: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -44,10 +43,6 @@ const AuthForm = () => {
         role: !isLogin ? role : undefined,
       };
 
-      if (!isLogin && role === "driver") {
-        requestData.licenseNumber = formData.licenseNumber;
-      }
-
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -64,24 +59,36 @@ const AuthForm = () => {
 
       if (isLogin) {
         dispatch(loginSuccess(data));
-        router.push("/", { scroll: false });
+        if (data.role === "admin") {
+          router.push("/admin/fleet", { scroll: false });
+        } else if (data.role === "driver") {
+          router.push("/driver/jobs", { scroll: false });
+        } else {
+          router.push("/", { scroll: false });
+        }
         alert(`Logged in as ${data.name} (${data.role})`);
       } else {
         alert("Signup successful! Please log in.");
         setIsLogin(true);
-        setFormData({
-          name: "",
-          email: "",
-          password: "",
-          licenseNumber: "",
-        });
-        setRole("user");
       }
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    clearData();
+  }, [isLogin]);
+
+  const clearData = () => {
+    setFormData({
+      name: "",
+      email: "",
+      password: "",
+    });
+    setRole("user");
   };
 
   return (
@@ -147,24 +154,7 @@ const AuthForm = () => {
             >
               <option value="user">User</option>
               <option value="admin">Admin</option>
-              <option value="driver">Driver</option>
             </select>
-          </div>
-        )}
-
-        {!isLogin && role === "driver" && (
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              License Number
-            </label>
-            <input
-              type="text"
-              name="licenseNumber"
-              value={formData.licenseNumber}
-              onChange={handleChange}
-              required
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-            />
           </div>
         )}
 

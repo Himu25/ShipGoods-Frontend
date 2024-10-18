@@ -1,5 +1,5 @@
-import React from "react";
+import FleetComp from "@/components/fleet/Fleet";
 
-export default function page() {
-  return <div>page</div>;
+export default async function Page() {
+  return <FleetComp />;
 }

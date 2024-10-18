@@ -1,11 +1,9 @@
-import BookingsCard from "@/components/BookingsCard";
-import DriverSearchForm from "@/components/DriverSearchForm";
-import Image from "next/image";
+import MapComponent from "@/components/Map";
 
 export default function Home() {
   return (
     <>
-      <DriverSearchForm />
+      <MapComponent />
     </>
   );
 }

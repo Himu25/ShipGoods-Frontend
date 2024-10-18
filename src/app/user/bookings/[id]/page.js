@@ -1,15 +1,16 @@
-import Bookings from "@/components/Bookings";
 import { cookies } from "next/headers";
+import BookingWrap from "@/components/booking/BookingWrap";
 
-export default async function Page() {
+export default async function page({ params }) {
+  const { id } = params;
   const cookieStore = cookies();
   const token = cookieStore.get("token");
 
   const fetchBookingDetails = async () => {
-    const res = await fetch(`http://localhost:3000/api/bookings`, {
+    const res = await fetch(`http://localhost:3000/api/booking/${id}`, {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${token?.value}`,
+        Authorization: `Bearer ${token.value}`,
       },
     });
 
@@ -23,7 +24,7 @@ export default async function Page() {
   let bookingDetails;
   try {
     bookingDetails = await fetchBookingDetails();
-    console.log("🚀 ~ Page ~ bookingDetails:", bookingDetails);
+    console.log(bookingDetails);
   } catch (error) {
     console.error(error);
     return <div>Error fetching booking details.</div>;
@@ -31,7 +32,7 @@ export default async function Page() {
 
   return (
     <>
-      <Bookings bookings={bookingDetails} />
+      <BookingWrap booking={bookingDetails.booking} />
     </>
   );
 }

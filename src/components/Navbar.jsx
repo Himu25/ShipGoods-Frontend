@@ -5,11 +5,14 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FaSearch } from "react-icons/fa";
 import { AiOutlineLogout, AiOutlineLogin } from "react-icons/ai";
-import { RiUserAddFill } from "react-icons/ri";
+import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   const dispatch = useDispatch();
   const { isLoggedIn, role, name } = useSelector((state) => state.auth);
+  const router = useRouter();
+  const currentPath = usePathname();
 
   useEffect(() => {
     dispatch(loadUserFromCookies());
@@ -17,6 +20,7 @@ export default function Navbar() {
 
   const handleLogout = () => {
     dispatch(logout());
+    router.push("/login");
   };
 
   const renderMenuItems = () => {
@@ -24,13 +28,26 @@ export default function Navbar() {
       case "user":
         return (
           <>
-            <Link href="/bookings">
-              <span className="px-3 py-2 text-gray-700 transition duration-300 transform hover:bg-gray-200 rounded-md">
+            <Link href="/" className={currentPath === "/" ? "active" : ""}>
+              <span className="px-3 py-2 transition duration-300 transform hover:bg-gray-200 rounded-md">
+                Home
+              </span>
+            </Link>
+            <Link
+              href="/user/bookings"
+              className={
+                currentPath.startsWith("/user/bookings") ? "active" : ""
+              }
+            >
+              <span className="px-3 py-2 transition duration-300 transform hover:bg-gray-200 rounded-md">
                 Bookings
               </span>
             </Link>
-            <Link href="/track">
-              <span className="px-3 py-2 text-gray-700 transition duration-300 transform hover:bg-gray-200 rounded-md">
+            <Link
+              href="/user/bookings/track"
+              className={currentPath === "/user/bookings/track" ? "active" : ""}
+            >
+              <span className="px-3 py-2 transition duration-300 transform hover:bg-gray-200 rounded-md">
                 Track Vehicle
               </span>
             </Link>
@@ -39,14 +56,12 @@ export default function Navbar() {
       case "driver":
         return (
           <>
-            <Link href="/available-jobs">
-              <span className="px-3 py-2 text-gray-700 transition duration-300 transform hover:bg-gray-200 rounded-md">
+            <Link
+              href="/driver/jobs"
+              className={currentPath === "/driver/jobs" ? "active" : ""}
+            >
+              <span className="px-3 py-2 transition duration-300 transform hover:bg-gray-200 rounded-md">
                 Available Jobs
-              </span>
-            </Link>
-            <Link href="/job-status">
-              <span className="px-3 py-2 text-gray-700 transition duration-300 transform hover:bg-gray-200 rounded-md">
-                Job Status
               </span>
             </Link>
           </>
@@ -54,13 +69,19 @@ export default function Navbar() {
       case "admin":
         return (
           <>
-            <Link href="/admin/fleet">
-              <span className="px-3 py-2 text-gray-700 transition duration-300 transform hover:bg-gray-200 rounded-md">
+            <Link
+              href="/admin/fleet"
+              className={currentPath === "/admin/fleet" ? "active" : ""}
+            >
+              <span className="px-3 py-2 transition duration-300 transform hover:bg-gray-200 rounded-md">
                 Fleet
               </span>
             </Link>
-            <Link href="/admin/analytics">
-              <span className="px-3 py-2 text-gray-700 transition duration-300 transform hover:bg-gray-200 rounded-md">
+            <Link
+              href="/admin/analytics"
+              className={currentPath === "/admin/analytics" ? "active" : ""}
+            >
+              <span className="px-3 py-2 transition duration-300 transform hover:bg-gray-200 rounded-md">
                 Analytics
               </span>
             </Link>
@@ -100,27 +121,19 @@ export default function Navbar() {
               </span>
               <button
                 onClick={handleLogout}
-                className="flex items-center px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 transition duration-300 shadow-md"
+                className="flex items-center px-4 py-2 text-red-600 font-semibold rounded-lg hover:underline transition duration-300"
               >
                 <AiOutlineLogout className="mr-2" />
                 Logout
               </button>
             </>
           ) : (
-            <>
-              <Link href="/login">
-                <button className="flex items-center px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">
-                  <AiOutlineLogin className="mr-2" />
-                  Login
-                </button>
-              </Link>
-              <Link href="/signup">
-                <button className="flex items-center px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700 transition duration-300 shadow-md">
-                  <RiUserAddFill className="mr-2" />
-                  Sign Up
-                </button>
-              </Link>
-            </>
+            <Link href="/login">
+              <button className="flex items-center px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">
+                <AiOutlineLogin className="mr-2" />
+                Login
+              </button>
+            </Link>
           )}
         </div>
       </div>
